@@ -17,31 +17,37 @@ class CategoryTile extends StatelessWidget {
             builder: (context) => CategoriesActivity(categoryData, snapshot)));
       },
       child: Card(
-          child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          AspectRatio(
-              aspectRatio: 1.0,
-              child: Image.network(
-                categoryData.image,
-                fit: BoxFit.cover,
-              )),
-          Container(
-            height: 25.0,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(color: Color.fromARGB(180, 0, 0, 0)),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.0),
-              child: Text(
-                categoryData.title,
-                textAlign: TextAlign.center,
-                style:
-                    TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
-              ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: <Widget>[
+                AspectRatio(
+                    aspectRatio: 1.0,
+                    child: Image.network(
+                      categoryData.image,
+                      fit: BoxFit.cover,
+                    )),
+                Container(
+                  height: 25.0,
+                  width: MediaQuery.of(context).size.width,
+                  decoration:
+                      BoxDecoration(color: Color.fromARGB(180, 0, 0, 0)),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      categoryData.title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      )),
+          )),
     );
   }
 }

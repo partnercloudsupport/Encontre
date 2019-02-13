@@ -19,7 +19,9 @@ class _HomeActivityState extends State<HomeActivity> {
   }
 
   Widget _carouselImage() {
-    return Carousel(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20.0),
+       child: Carousel(
       images: [
         NetworkImage(
             "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/30226182_1670722086337822_2924877442096113084_n.png?_nc_cat=110&_nc_ht=scontent.fpoa6-1.fna&oh=2f62a50285734e39294a3a74234ac16e&oe=5CE52392"),
@@ -37,6 +39,7 @@ class _HomeActivityState extends State<HomeActivity> {
       autoplay: true,
       borderRadius: true,
       radius: Radius.circular(20.0),
+    ),
     );
   }
 

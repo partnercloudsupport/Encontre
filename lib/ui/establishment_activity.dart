@@ -68,7 +68,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
 
   Widget _establishmentData() {
     return Card(
-      elevation: 4.0,
+      elevation: 2.0,
       child: _listData(),
     );
   }
@@ -81,19 +81,22 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
 
   Widget _mapEstablishment() {
     return Card(
-      elevation: 4.0,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width / 1.3,
-        height: 200.0,
-        child: GoogleMap(
-          mapType: MapType.satellite,
-          initialCameraPosition: CameraPosition(
-              bearing: 270.0,
-              tilt: 30.0,
-              zoom: 17.0,
-              target: LatLng(double.parse(snapshot.data["lat"]),
-                  double.parse(snapshot.data["lon"]))),
-          onMapCreated: _onMapCreated,
+      elevation: 2.0,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4.0),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width / 1.3,
+          height: MediaQuery.of(context).size.height / 3,
+          child: GoogleMap(
+            mapType: MapType.satellite,
+            initialCameraPosition: CameraPosition(
+                bearing: 270.0,
+                tilt: 30.0,
+                zoom: 17.0,
+                target: LatLng(double.parse(snapshot.data["lat"]),
+                    double.parse(snapshot.data["lon"]))),
+            onMapCreated: _onMapCreated,
+          ),
         ),
       ),
     );
@@ -109,7 +112,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
             padding: EdgeInsets.all(12.0),
             children: <Widget>[
               _establishmentData(),
-              SizedBox(height: 8.0),
+              SizedBox(height: 4.0),
               _mapEstablishment()
             ],
           )),
