@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "117269136522",
+    "firebase_url": "https://encontrei-45ddd.firebaseio.com",
+    "project_id": "encontrei-45ddd",
+    "storage_bucket": "encontrei-45ddd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117269136522:android:eac49a1bd21da329",
+        "android_client_info": {
+          "package_name": "br.com.shinoda.encontrei"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117269136522-tsta065p2rpf51lm2c7bnasptkkmfrr0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.shinoda.encontrei",
+            "certificate_hash": "3441614a8a1c21fe0db2bfd26f31d5069a997865"
+          }
+        },
+        {
+          "client_id": "117269136522-rbvd12nb5ae7ee306qsg9tp78np6lue3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6ZaBOb7Jm7_126qcJVoPpo3JHE3BHV_g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117269136522-rbvd12nb5ae7ee306qsg9tp78np6lue3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
