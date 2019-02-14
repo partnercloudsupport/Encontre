@@ -10,6 +10,7 @@ class HomeActivity extends StatefulWidget {
 }
 
 class _HomeActivityState extends State<HomeActivity> {
+
   Widget _topTexts(String text, FontWeight fontWeight, double fontSize) {
     return Text(
       text,
@@ -21,25 +22,25 @@ class _HomeActivityState extends State<HomeActivity> {
   Widget _carouselImage() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20.0),
-       child: Carousel(
-      images: [
-        NetworkImage(
-            "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/30226182_1670722086337822_2924877442096113084_n.png?_nc_cat=110&_nc_ht=scontent.fpoa6-1.fna&oh=2f62a50285734e39294a3a74234ac16e&oe=5CE52392"),
-        NetworkImage(
-            "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/26903783_1593708934039138_8456771874017279377_n.png?_nc_cat=101&_nc_ht=scontent.fpoa6-1.fna&oh=ad0c296f264a76e58e7949e0198d9f5c&oe=5CE0CAF7"),
-        NetworkImage(
-            "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/26907124_1595705960506102_7934089022868189376_n.png?_nc_cat=108&_nc_ht=scontent.fpoa6-1.fna&oh=38d9c909e94b7120ad8f48ae0e0f195e&oe=5CFCC64E"),
-        NetworkImage(
-            "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/19366442_1387132248030142_4984394172633788887_n.png?_nc_cat=108&_nc_ht=scontent.fpoa6-1.fna&oh=8633738a3de5e8039a92c4a4da111667&oe=5CE7431B"),
-      ],
-      dotSize: 5.0,
-      dotColor: Theme.of(context).primaryColor,
-      dotSpacing: 15.0,
-      dotBgColor: Colors.transparent,
-      autoplay: true,
-      borderRadius: true,
-      radius: Radius.circular(20.0),
-    ),
+      child: Carousel(
+        images: [
+          NetworkImage(
+              "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/30226182_1670722086337822_2924877442096113084_n.png?_nc_cat=110&_nc_ht=scontent.fpoa6-1.fna&oh=2f62a50285734e39294a3a74234ac16e&oe=5CE52392"),
+          NetworkImage(
+              "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/26903783_1593708934039138_8456771874017279377_n.png?_nc_cat=101&_nc_ht=scontent.fpoa6-1.fna&oh=ad0c296f264a76e58e7949e0198d9f5c&oe=5CE0CAF7"),
+          NetworkImage(
+              "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/26907124_1595705960506102_7934089022868189376_n.png?_nc_cat=108&_nc_ht=scontent.fpoa6-1.fna&oh=38d9c909e94b7120ad8f48ae0e0f195e&oe=5CFCC64E"),
+          NetworkImage(
+              "https://scontent.fpoa6-1.fna.fbcdn.net/v/t1.0-9/19366442_1387132248030142_4984394172633788887_n.png?_nc_cat=108&_nc_ht=scontent.fpoa6-1.fna&oh=8633738a3de5e8039a92c4a4da111667&oe=5CE7431B"),
+        ],
+        dotSize: 5.0,
+        dotColor: Theme.of(context).primaryColor,
+        dotSpacing: 15.0,
+        dotBgColor: Colors.transparent,
+        autoplay: true,
+        borderRadius: true,
+        radius: Radius.circular(20.0),
+      ),
     );
   }
 
@@ -69,15 +70,29 @@ class _HomeActivityState extends State<HomeActivity> {
           borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(40.0),
               bottomRight: Radius.circular(40.0))),
-      child: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _topTexts("Bem Vindo à Camaquã", FontWeight.w700, 20.0),
-          _topTexts(
-              "Encontramos 20 serviços para você", FontWeight.normal, 12.0),
-        ],
-      )),
+      child: FutureBuilder<QuerySnapshot>(
+        future: Firestore.instance.collection("categories").getDocuments(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _topTexts("Bem Vindo à Camaquã", FontWeight.w700, 20.0),
+                _topTexts(
+                    "Encontramos ${snapshot.data.documents.length} categorias para você",
+                    FontWeight.normal,
+                    12.0),
+              ],
+            ));
+          }
+          ;
+        },
+      ),
     );
   }
 

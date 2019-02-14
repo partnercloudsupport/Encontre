@@ -22,20 +22,30 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
 
   Widget _appBar() {
     return SliverAppBar(
-        expandedHeight: 200.0,
-        floating: false,
-        pinned: true,
-        flexibleSpace: FlexibleSpaceBar(
-          centerTitle: true,
-          title: Text(
-            snapshot.data["title"],
-            style: TextStyle(color: Colors.white, fontSize: 16.0),
+      expandedHeight: 200.0,
+      floating: false,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        centerTitle: true,
+        title: Text(
+          snapshot.data["title"],
+          style: TextStyle(color: Colors.white, fontSize: 16.0),
+        ),
+        background: Image.network(
+          snapshot.data["image"],
+          fit: BoxFit.cover,
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.confirmation_number,
+            color: Colors.white,
           ),
-          background: Image.network(
-            snapshot.data["image"],
-            fit: BoxFit.cover,
-          ),
-        ));
+          onPressed: () {},
+        )
+      ],
+    );
   }
 
   Widget _listTileWidget(String title, String subtitle, IconData icon) {
@@ -76,6 +86,12 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       mapController = controller;
+      controller.addMarker(MarkerOptions(
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          position: LatLng(double.parse(snapshot.data["lat"]),
+              double.parse(snapshot.data["lon"])),
+          infoWindowText: InfoWindowText(
+              snapshot.data["title"], snapshot.data["address"])));
     });
   }
 
@@ -88,7 +104,9 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
           width: MediaQuery.of(context).size.width / 1.3,
           height: MediaQuery.of(context).size.height / 3,
           child: GoogleMap(
-            mapType: MapType.satellite,
+            rotateGesturesEnabled: false,
+            scrollGesturesEnabled: false,
+            tiltGesturesEnabled: false,
             initialCameraPosition: CameraPosition(
                 bearing: 270.0,
                 tilt: 30.0,
