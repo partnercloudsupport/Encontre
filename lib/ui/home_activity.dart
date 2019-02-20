@@ -10,7 +10,6 @@ class HomeActivity extends StatefulWidget {
 }
 
 class _HomeActivityState extends State<HomeActivity> {
-
   Widget _topTexts(String text, FontWeight fontWeight, double fontSize) {
     return Text(
       text,
@@ -90,7 +89,6 @@ class _HomeActivityState extends State<HomeActivity> {
               ],
             ));
           }
-          ;
         },
       ),
     );

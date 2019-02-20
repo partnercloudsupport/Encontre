@@ -1,7 +1,8 @@
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class EstablishmentActivity extends StatefulWidget {
   final DocumentSnapshot snapshot;
@@ -15,10 +16,10 @@ class EstablishmentActivity extends StatefulWidget {
 
 class _EstablishmentActivityState extends State<EstablishmentActivity> {
   final DocumentSnapshot snapshot;
-
   _EstablishmentActivityState(this.snapshot);
 
   GoogleMapController mapController;
+  GoogleSignIn googleAuth = new GoogleSignIn();
 
   Widget _appBar() {
     return SliverAppBar(
@@ -63,15 +64,15 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
     return Column(
       children: <Widget>[
         _listTileWidget(
-            "Endereço", snapshot.data["address"], Icons.location_on),
-        _listTileWidget("Número", snapshot.data["number"], Icons.looks_one),
-        _listTileWidget(
-            "Bairro", snapshot.data["neighborhood"], Icons.device_hub),
-        _listTileWidget("CEP", snapshot.data["zipcode"], Icons.map),
-        _listTileWidget("UF", snapshot.data["uf"], Icons.account_balance),
+            "Endereço",
+            "${snapshot.data["address"]}, Nº${snapshot.data["number"]} - ${snapshot.data["neighborhood"]}",
+            Icons.location_on),
+        _listTileWidget("CEP",
+            "${snapshot.data["zipcode"]} / ${snapshot.data["uf"]}", Icons.map),
         _listTileWidget("Telefone", snapshot.data["phone"], Icons.phone),
         _listTileWidget(
             "E-mail", snapshot.data["email"], Icons.alternate_email),
+        _listTileWidget("Avaliações", "4.5 / 5.0", Icons.rate_review)
       ],
     );
   }
@@ -120,7 +121,73 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
     );
   }
 
-  Widget _appBarWithoutCarousel() {
+  Widget _rateButton() {
+    return RaisedButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+      ),
+      onPressed: () async {
+        if (await FirebaseAuth.instance.currentUser() != null) {
+          // ? ABRIR DIALOG PARA AVALIAR O ESTABELECIMENTO
+        } else {
+          googleAuth.signIn().then((result) {
+            result.authentication.then((googleKey) {
+              FirebaseAuth.instance
+                  .signInWithGoogle(
+                      idToken: googleKey.idToken,
+                      accessToken: googleKey.accessToken)
+                  .then((signInUser) {
+                print("Loged In");
+              }).catchError((e) {
+                print("Google Sign Error: ${e}");
+              });
+            }).catchError((e) {
+              print("Google Sign Error: ${e}");
+            });
+          }).catchError((e) {
+            print("Google Sign Error: ${e}");
+          });
+        }
+        ;
+      },
+      padding: EdgeInsets.all(16),
+      color: Colors.blue,
+      child: Text('Avaliar Estabelecimento',
+          style: TextStyle(color: Colors.white)),
+    );
+  }
+
+  Widget _rating() {
+    return Card(
+      elevation: 2.0,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 4.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 15.0),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      "Este estabelecimento não tem nenhuma avaliação no momento!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    _rateButton()
+                  ],
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrooled) {
@@ -131,43 +198,11 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
             children: <Widget>[
               _establishmentData(),
               SizedBox(height: 4.0),
-              _mapEstablishment()
+              _mapEstablishment(),
+              SizedBox(height: 4.0),
+              _rating()
             ],
           )),
     );
-  }
-
-  Widget _carouselImages() {
-    AspectRatio(
-      aspectRatio: 0.9,
-      child: Carousel(
-          images: snapshot.data["images"].map((url) {
-            return NetworkImage(url);
-          }).toList(),
-          dotSize: 4.0,
-          dotColor: Colors.blue,
-          dotSpacing: 15.0,
-          dotBgColor: Colors.transparent,
-          autoplay: false),
-    );
-  }
-
-  Widget _appBarWithCarousel() {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(snapshot.data["title"]),
-        centerTitle: true,
-      ),
-      body: ListView(
-        children: <Widget>[
-          _carouselImages(),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _appBarWithoutCarousel();
   }
 }

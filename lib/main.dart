@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encontrei/ui/home_activity.dart';
 import 'package:flutter/material.dart';
 
