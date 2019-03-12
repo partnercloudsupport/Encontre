@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class EstablishmentTile extends StatelessWidget {
   final DocumentSnapshot snapshot;
+  final String documentId;
 
-  EstablishmentTile(this.snapshot);
+  EstablishmentTile(this.snapshot, this.documentId);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class EstablishmentTile extends StatelessWidget {
       trailing: Icon(Icons.keyboard_arrow_right),
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => EstablishmentActivity(snapshot)));
+            builder: (context) => EstablishmentActivity(snapshot, documentId)));
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:encontrei/tile/rating_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,20 +7,25 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class EstablishmentActivity extends StatefulWidget {
   final DocumentSnapshot snapshot;
+  final String documentId;
 
-  EstablishmentActivity(this.snapshot);
+  EstablishmentActivity(this.snapshot, this.documentId);
 
   @override
   _EstablishmentActivityState createState() =>
-      _EstablishmentActivityState(snapshot);
+      _EstablishmentActivityState(snapshot, documentId);
 }
 
 class _EstablishmentActivityState extends State<EstablishmentActivity> {
   final DocumentSnapshot snapshot;
-  _EstablishmentActivityState(this.snapshot);
+  final String documentId;
+  _EstablishmentActivityState(this.snapshot, this.documentId);
 
   GoogleMapController mapController;
   GoogleSignIn googleAuth = new GoogleSignIn();
+
+  double rate = 0;
+  int med = 0;
 
   Widget _appBar() {
     return SliverAppBar(
@@ -60,28 +66,25 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
     );
   }
 
-  Widget _listData() {
-    return Column(
-      children: <Widget>[
-        _listTileWidget(
-            "Endereço",
-            "${snapshot.data["address"]}, Nº${snapshot.data["number"]} - ${snapshot.data["neighborhood"]}",
-            Icons.location_on),
-        _listTileWidget("CEP",
-            "${snapshot.data["zipcode"]} / ${snapshot.data["uf"]}", Icons.map),
-        _listTileWidget("Telefone", snapshot.data["phone"], Icons.phone),
-        _listTileWidget(
-            "E-mail", snapshot.data["email"], Icons.alternate_email),
-        _listTileWidget("Avaliações", "4.5 / 5.0", Icons.rate_review)
-      ],
-    );
-  }
-
   Widget _establishmentData() {
     return Card(
-      elevation: 2.0,
-      child: _listData(),
-    );
+        elevation: 2.0,
+        child: Column(
+          children: <Widget>[
+            _listTileWidget(
+                "Endereço",
+                "${snapshot.data["address"]}, Nº${snapshot.data["number"]} - ${snapshot.data["neighborhood"]}",
+                Icons.location_on),
+            _listTileWidget(
+                "CEP",
+                "${snapshot.data["zipcode"]} / ${snapshot.data["uf"]}",
+                Icons.map),
+            _listTileWidget("Telefone", snapshot.data["phone"], Icons.phone),
+            _listTileWidget(
+                "E-mail", snapshot.data["email"], Icons.alternate_email),
+            _listTileWidget("Avaliações", "${rate} / 5.0", Icons.rate_review)
+          ],
+        ));
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -128,7 +131,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
       ),
       onPressed: () async {
         if (await FirebaseAuth.instance.currentUser() != null) {
-          // ? ABRIR DIALOG PARA AVALIAR O ESTABELECIMENTO
+          // ? COMENTAR
         } else {
           googleAuth.signIn().then((result) {
             result.authentication.then((googleKey) {
@@ -137,7 +140,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
                       idToken: googleKey.idToken,
                       accessToken: googleKey.accessToken)
                   .then((signInUser) {
-                print("Loged In");
+                // ? COMENTAR
               }).catchError((e) {
                 print("Google Sign Error: ${e}");
               });
@@ -157,23 +160,64 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
     );
   }
 
+  Widget _showComments() {
+    return FutureBuilder<QuerySnapshot>(
+      future: Firestore.instance
+          .collection("categories")
+          .document(documentId)
+          .collection("establishment")
+          .document(snapshot.documentID)
+          .collection("rating")
+          .getDocuments(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.active:
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Text(
+                  "Ocorreu um erro ao listar as avaliações deste estabelecimento!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w700));
+            } else {
+              if (snapshot.data.documents.length == null ||
+                  snapshot.data.documents.length == 0) {
+                return Text(
+                  "Este estabelecimento não tem nenhuma avaliação no momento!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                );
+              } else {
+                return ListView(
+                    shrinkWrap: true,
+                    children: ListTile.divideTiles(
+                            tiles: snapshot.data.documents.map<Widget>((doc) {
+                              rate += doc.data["rate"];                               
+                              return RatingTile(doc);
+                            }).toList(),
+                            color: Colors.grey[500])
+                        .toList());
+              }
+            }
+            break;
+        }
+      },
+    );
+  }
+
   Widget _rating() {
     return Card(
       elevation: 2.0,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 4.0),
+        padding: EdgeInsets.only(bottom: 10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 15.0),
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
                 child: Column(
                   children: <Widget>[
-                    Text(
-                      "Este estabelecimento não tem nenhuma avaliação no momento!",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
+                    _showComments(),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -189,11 +233,20 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(
+          Icons.share,
+          color: Colors.white,
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrooled) {
             return <Widget>[_appBar()];
           },
           body: ListView(
+            shrinkWrap: true,
             padding: EdgeInsets.all(12.0),
             children: <Widget>[
               _establishmentData(),

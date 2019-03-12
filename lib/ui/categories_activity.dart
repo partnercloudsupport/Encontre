@@ -50,7 +50,7 @@ class CategoriesActivity extends StatelessWidget {
               if (snapshot.data.documents.length > 0) {
                 var dividedTiles = ListTile.divideTiles(
                         tiles: snapshot.data.documents.map<Widget>((doc) {
-                          return EstablishmentTile(doc);
+                          return EstablishmentTile(doc, this.snapshot.documentID);
                         }).toList(),
                         color: Colors.grey[500])
                     .toList();
