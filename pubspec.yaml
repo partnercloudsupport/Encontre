@@ -7,7 +7,7 @@ description: Aplicativo para encontrar o comercio
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.0.0+1
+version: 1.0.4
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -18,10 +18,13 @@ dependencies:
 
   cupertino_icons: ^0.1.2
   carousel_pro: ^0.0.13
-  cloud_firestore: ^0.8.2+3
-  firebase_auth: ^0.6.6
+  cloud_firestore: ^0.9.7
   google_maps_flutter: ^0.2.0
   google_sign_in: ^4.0.1
+  latlong: ^0.6.1
+  expandable: ^2.0.0
+  geolocator: ^3.0.1
+
 
 dev_dependencies:
 

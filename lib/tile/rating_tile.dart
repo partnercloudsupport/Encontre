@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RatingTile extends StatelessWidget {
@@ -7,13 +6,13 @@ class RatingTile extends StatelessWidget {
   RatingTile(this.snapshot);
 
 Future<String> _displayName() async{
-  FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  return user.displayName;
+  //FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  //return user.displayName;
 }
 
 Future<String> _image() async{
-  FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  return user.photoUrl;
+  //FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  //return user.photoUrl;
 }
 
   @override
