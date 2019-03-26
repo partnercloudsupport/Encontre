@@ -23,16 +23,16 @@ class _EstablishmentTileState extends State<EstablishmentTile> {
 
   _EstablishmentTileState(this.snapshot, this.documentId);
 
-  void _calculateDistance(double lon, double lat) {
+  void _calculateDistance(double lon, double lat) async {
     final Distance distance = new Distance();
 
-    final double km = distance.as(
+    final double km = await distance.as(
         LengthUnit.Kilometer,
         new LatLng(double.parse(snapshot.data["lat"]),
             double.parse(snapshot.data["lon"])),
         new LatLng(lon, lat));
 
-    final double meter = distance(
+    final double meter = await distance(
         new LatLng(double.parse(snapshot.data["lat"]),
             double.parse(snapshot.data["lon"])),
         new LatLng(lon, lat));
