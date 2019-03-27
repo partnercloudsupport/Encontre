@@ -1,5 +1,6 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:encontrei/utils/utils_launch.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,6 +25,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
 
   GoogleMapController mapController;
   GoogleSignIn googleAuth = new GoogleSignIn();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   double rate = 0;
   int med = 0;
@@ -50,30 +52,12 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
             Icons.confirmation_number,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: () {
+            _showSnackbar("Nenhum cupom disponível no momento, tente mais tarde!", Colors.green, 3);
+          },
         )
       ],
     );
-  }
-
-  void _openPhone(String phone) async {
-    if (phone.isNotEmpty) {
-      if (await canLaunch("tel:${phone}")) {
-        await launch("tel:${phone}");
-      } else {
-        throw 'Could not launch';
-      }
-    }
-  }
-
-  void _openEmail(String email) async {
-    if (email.isNotEmpty) {
-      if (await canLaunch("mailto:${email}")) {
-        await launch("mailto:${email}");
-      } else {
-        throw 'Could not launch';
-      }
-    }
   }
 
   Widget _listTileWidget(
@@ -108,14 +92,52 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
           ),
           expanded: Column(
             children: <Widget>[
-              _listTileWidget("Endereço",
-                  "${snapshot.data["address"]}, Nº${snapshot.data["number"]} - ${snapshot.data["neighborhood"]}", Icons.location_on, null),
-              _listTileWidget("CEP",
-                  "${snapshot.data["zipcode"]} / ${snapshot.data["uf"]}", Icons.map, null),
-              _listTileWidget("Telefone", 
-                  snapshot.data["phone"], Icons.phone, _openPhone(snapshot.data["phone"])),
-              _listTileWidget("E-mail", 
-                  snapshot.data["email"], Icons.alternate_email, _openEmail(snapshot.data["email"])),
+              ListTile(
+                trailing: Icon(Icons.keyboard_arrow_right),
+                leading: Icon(
+                  Icons.location_on,
+                  color: Colors.blue,
+                ),
+                onTap: () {
+                  UtilsLaunch.openMaps("https://maps.google.com/?q=${snapshot.data["title"]}&ll=${snapshot.data["lat"]},${snapshot.data["lon"]}");
+                },
+                title: Text("Endereço"),
+                subtitle: Text(
+                    "${snapshot.data["address"]}, Nº${snapshot.data["number"]} - ${snapshot.data["neighborhood"]}"),
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.map,
+                  color: Colors.blue,
+                ),
+                title: Text("CEP"),
+                subtitle: Text(
+                    "${snapshot.data["zipcode"]} / ${snapshot.data["uf"]}"),
+              ),
+              ListTile(
+                trailing: Icon(Icons.keyboard_arrow_right),
+                leading: Icon(
+                  Icons.phone,
+                  color: Colors.blue,
+                ),
+                title: Text("Telefone"),
+                onTap: () {
+                  UtilsLaunch.openPhone(snapshot.data["phone"]);
+                },
+                subtitle: Text(snapshot.data["phone"]),
+              ),
+              ListTile(
+                trailing: Icon(Icons.keyboard_arrow_right),
+                leading: Icon(
+                  Icons.alternate_email,
+                  color: Colors.blue,
+                ),
+                title: Text("E-mail"),
+                onTap: () {
+                  UtilsLaunch.openEmail(snapshot.data["email"]);
+                },
+                subtitle: Text(snapshot.data["email"]),
+              ),
             ],
           ),
           tapHeaderToExpand: true,
@@ -241,9 +263,21 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
     );
   }
 
+  void _showSnackbar(String text, Color color, int seconds) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
+        text,
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: color,
+      duration: Duration(seconds: seconds),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: Icon(
