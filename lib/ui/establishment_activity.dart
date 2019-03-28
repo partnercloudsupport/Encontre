@@ -5,6 +5,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:unicorndial/unicorndial.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EstablishmentActivity extends StatefulWidget {
@@ -26,9 +27,6 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
   GoogleMapController mapController;
   GoogleSignIn googleAuth = new GoogleSignIn();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  double rate = 0;
-  int med = 0;
 
   Widget _appBar() {
     return SliverAppBar(
@@ -53,7 +51,10 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
             color: Colors.white,
           ),
           onPressed: () {
-            _showSnackbar("Nenhum cupom disponível no momento, tente mais tarde!", Colors.green, 3);
+            _showSnackbar(
+                "Nenhum cupom disponível no momento, tente mais tarde!",
+                Colors.green,
+                3);
           },
         )
       ],
@@ -99,20 +100,12 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
                   color: Colors.blue,
                 ),
                 onTap: () {
-                  UtilsLaunch.openMaps("https://maps.google.com/?q=${snapshot.data["title"]}&ll=${snapshot.data["lat"]},${snapshot.data["lon"]}");
+                  UtilsLaunch.openMaps(
+                      "https://maps.google.com/?q=${snapshot.data["title"]}&ll=${snapshot.data["lat"]},${snapshot.data["lon"]}");
                 },
                 title: Text("Endereço"),
                 subtitle: Text(
-                    "${snapshot.data["address"]}, Nº${snapshot.data["number"]} - ${snapshot.data["neighborhood"]}"),
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.map,
-                  color: Colors.blue,
-                ),
-                title: Text("CEP"),
-                subtitle: Text(
-                    "${snapshot.data["zipcode"]} / ${snapshot.data["uf"]}"),
+                    "${snapshot.data["address"]}, Nº${snapshot.data["number"]} - ${snapshot.data["neighborhood"]} - ${snapshot.data["zipcode"]} / ${snapshot.data["uf"]}"),
               ),
               ListTile(
                 trailing: Icon(Icons.keyboard_arrow_right),
@@ -171,7 +164,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
     );
   }
 
-  Widget _picutresEstablishment() {
+  Widget _picturesEstablishment() {
     return Card(
       elevation: 2.0,
       child: ExpandablePanel(
@@ -276,16 +269,44 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
 
   @override
   Widget build(BuildContext context) {
+    var childButtons = List<UnicornButton>();
+
+    childButtons.add(UnicornButton(
+        currentButton: FloatingActionButton(
+      backgroundColor: Colors.blue[500],
+      mini: true,
+      child: Icon(Icons.share),
+      onPressed: () {},
+    )));
+
+    childButtons.add(UnicornButton(
+        currentButton: FloatingActionButton(
+            onPressed: () {
+              UtilsLaunch.openFacebook(
+                  "https://www.facebook.com/${snapshot.data["facebook"]}");
+            },
+            backgroundColor: Color.fromARGB(255, 59, 89, 152),
+            mini: true,
+            child: Image.asset("assets/facebook.png", width: 24))));
+
+    childButtons.add(UnicornButton(
+        currentButton: FloatingActionButton(
+            onPressed: () {
+              UtilsLaunch.openWhatsApp(
+                  "https://api.whatsapp.com/send?phone=${snapshot.data["whatsapp"]}");
+            },
+            backgroundColor: Color.fromARGB(255, 52, 175, 35),
+            mini: true,
+            child: Image.asset("assets/whatsapp.png", width: 24))));
+
     return Scaffold(
       key: _scaffoldKey,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(
-          Icons.share,
-          color: Colors.white,
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
+      floatingActionButton: UnicornDialer(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0.6),
+          parentButtonBackground: Theme.of(context).primaryColor,
+          orientation: UnicornOrientation.VERTICAL,
+          parentButton: Icon(Icons.add),
+          childButtons: childButtons),
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrooled) {
             return <Widget>[_appBar()];
@@ -300,7 +321,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
               SizedBox(height: 4.0),
               _mapEstablishment(),
               SizedBox(height: 4.0),
-              _picutresEstablishment(),
+              _picturesEstablishment(),
               SizedBox(height: 4.0),
             ],
           )),

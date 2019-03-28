@@ -7,7 +7,7 @@ class Encontrei extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Encontrei!",
+      title: "Encontrei - Camaquã",
       theme: ThemeData(
         primaryColor: const Color.fromARGB(255, 41, 98, 255),
         primarySwatch: Colors.blue,

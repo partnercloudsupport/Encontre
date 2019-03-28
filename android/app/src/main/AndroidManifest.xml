@@ -16,7 +16,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="encontrei"
+        android:label="Encontrei - Camaquã"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
                 android:value="AIzaSyAu7Kz04hOo5Krgf_UERZ3jIBriSeV5TiM"/>

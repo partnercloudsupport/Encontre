@@ -26,4 +26,20 @@ class UtilsLaunch {
     }
   }
 
+  static openFacebook(String facebook)  async {
+    if (await canLaunch(facebook)) {
+      await launch(facebook);
+    } else {
+      throw 'Could not open the facebook.';
+    }
+  }
+
+  static openWhatsApp(String wpp)  async {
+    if (await canLaunch(wpp)) {
+      await launch(wpp);
+    } else {
+      throw 'Could not open the whatsapp.';
+    }
+  }
+
 }
