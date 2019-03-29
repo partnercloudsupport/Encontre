@@ -7,7 +7,7 @@ description: Aplicativo para encontrar o comercio
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.0.7
+version: 1.0.8
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -26,7 +26,7 @@ dependencies:
   geolocator: ^3.0.1
   url_launcher: ^5.0.2
   flutter_launcher_icons: "^0.7.0"
-  unicorndial: "^1.1.5"
+  flutter_speed_dial: ^1.1.1
 
 flutter_icons:
   image_path: "icon/icon.png" 
@@ -48,6 +48,7 @@ flutter:
   assets:
     - assets/facebook.png
     - assets/whatsapp.png
+    - assets/share.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

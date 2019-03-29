@@ -3,10 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:encontrei/utils/utils_launch.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:unicorndial/unicorndial.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class EstablishmentActivity extends StatefulWidget {
   final DocumentSnapshot snapshot;
@@ -269,7 +269,7 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
 
   @override
   Widget build(BuildContext context) {
-    var childButtons = List<UnicornButton>();
+    /* var childButtons = List<UnicornButton>();
 
     childButtons.add(UnicornButton(
         currentButton: FloatingActionButton(
@@ -297,16 +297,58 @@ class _EstablishmentActivityState extends State<EstablishmentActivity> {
             },
             backgroundColor: Color.fromARGB(255, 52, 175, 35),
             mini: true,
-            child: Image.asset("assets/whatsapp.png", width: 24))));
+            child: Image.asset("assets/whatsapp.png", width: 24))));*/
 
     return Scaffold(
       key: _scaffoldKey,
-      floatingActionButton: UnicornDialer(
-          backgroundColor: Color.fromRGBO(255, 255, 255, 0.6),
-          parentButtonBackground: Theme.of(context).primaryColor,
-          orientation: UnicornOrientation.VERTICAL,
-          parentButton: Icon(Icons.add),
-          childButtons: childButtons),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        animatedIconTheme: IconThemeData(size: 22.0),
+        curve: Curves.bounceIn,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.5,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 8.0,
+        shape: CircleBorder(),
+        children: [
+          SpeedDialChild(
+            child: Center(
+              child: Container(
+                width: 24.0,
+                height: 24.0,
+                child: Image.asset("assets/share.png", width: 24),
+              ),
+            ),
+            backgroundColor: Colors.blue[500],
+            onTap: () => _showSnackbar("Em Breve!", Colors.blue[500], 3),
+          ),
+          SpeedDialChild(
+            child: Center(
+              child: Container(
+                width: 24.0,
+                height: 24.0,
+                child: Image.asset("assets/facebook.png", width: 24),
+              ),
+            ),
+            backgroundColor: Color.fromARGB(255, 59, 89, 152),
+            onTap: () => UtilsLaunch.openFacebook(
+                  "https://www.facebook.com/${snapshot.data["facebook"]}"),
+          ),
+          SpeedDialChild(
+            child: Center(
+              child: Container(
+                width: 24.0,
+                height: 24.0,
+                child: Image.asset("assets/whatsapp.png", width: 24),
+              ),
+            ),
+            backgroundColor: Color.fromARGB(255, 52, 175, 35),
+            onTap: () => UtilsLaunch.openWhatsApp(
+                "https://api.whatsapp.com/send?phone=${snapshot.data["whatsapp"]}"),
+          ),
+        ],
+      ),
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrooled) {
             return <Widget>[_appBar()];
